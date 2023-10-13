@@ -1,0 +1,10 @@
+torch
+deep-translator
+transformers
+sentencepiece
+tenacity
+openai
+nlpaug
+nltk
+num2words
+tqdm
