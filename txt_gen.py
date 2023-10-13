@@ -11,8 +11,8 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
-from util.files import append_sentences_to_file, read_file
-from util.text import post_process_sentences
+from utils.files import append_sentences_to_file, read_file
+from utils.text import post_process_sentences
 
 MAX_TOKENS = {
     # https://platform.openai.com/docs/models/gpt-4

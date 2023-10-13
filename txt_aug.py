@@ -6,13 +6,13 @@ from typing import List
 from deep_translator import GoogleTranslator
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from tqdm import tqdm
-from util.text_augmenter import SentenceAugmenter
-from util.text import (
+from utils.text_augmenter import SentenceAugmenter
+from utils.text import (
     post_process_sentences,
     print_sentences_comparison,
     remove_equal_sentences,
 )
-from util.files import read_sentences_corpus, append_sentences_to_file
+from utils.files import read_sentences_corpus, append_sentences_to_file
 
 """
 example usage:
