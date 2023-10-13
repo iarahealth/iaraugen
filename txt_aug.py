@@ -6,13 +6,25 @@ from typing import List
 from deep_translator import GoogleTranslator
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from tqdm import tqdm
-from utils.text_augmenter import SentenceAugmenter
-from utils.text import (
-    post_process_sentences,
-    print_sentences_comparison,
-    remove_equal_sentences,
-)
-from utils.files import read_sentences_corpus, append_sentences_to_file
+try:
+    # Try to import the modules as part of the current project (standalone).
+    from utils.text_augmenter import SentenceAugmenter
+    from utils.text import (
+        post_process_sentences,
+        print_sentences_comparison,
+        remove_equal_sentences,
+    )
+    from utils.files import read_sentences_corpus, append_sentences_to_file
+except ModuleNotFoundError:
+    # If the modules are not found, they might be in the submodule.
+    # Use different import paths.
+    from .utils.text_augmenter import SentenceAugmenter
+    from .utils.text import (
+        post_process_sentences,
+        print_sentences_comparison,
+        remove_equal_sentences,
+    )
+    from .utils.files import read_sentences_corpus, append_sentences_to_file
 
 """
 example usage:

@@ -11,8 +11,16 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
-from utils.files import append_sentences_to_file, read_file
-from utils.text import post_process_sentences
+
+try:
+    # Try to import the modules as part of the current project (standalone).
+    from utils.files import append_sentences_to_file, read_file
+    from utils.text import post_process_sentences
+except ModuleNotFoundError:
+    # If the modules are not found, they might be in the submodule.
+    # Use different import paths.
+    from .utils.files import append_sentences_to_file, read_file
+    from .utils.text import post_process_sentences
 
 MAX_TOKENS = {
     # https://platform.openai.com/docs/models/gpt-4
