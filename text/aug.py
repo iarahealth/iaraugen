@@ -159,7 +159,9 @@ def create_augmentation_sequence(
             if "swap" in aug or "swp" in aug:
                 action = "swap"
             augmenter = SentenceAugmenter(aug, action=action)
-            augmentation_sequence.append(lambda x: augmenter.augment_sentences(x))
+            augmentation_sequence.append(
+                lambda x, augmenter=augmenter: augmenter.augment_sentences(x)
+            )
         elif aug == "translate":
             augmentation_sequence.append(
                 lambda x: translation_pipeline(x, translate_mode, lang, device)
