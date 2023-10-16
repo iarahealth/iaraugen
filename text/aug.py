@@ -22,7 +22,7 @@ class SentenceAugmenter:
         self.aug_min = aug_min
         self.aug_max = aug_max
         self.aug_p = aug_p
-        if augmenter_type == "random":
+        if "random" in augmenter_type:
             self.augmenter = RandomWordAug(
                 action=self.action,
                 aug_min=self.aug_min,
@@ -150,11 +150,14 @@ def translation_pipeline(
 
 
 def create_augmentation_sequence(
-    augmentations: List[str], action: str, translate_mode: str, lang: str, device: str
+    augmentations: List[str], translate_mode: str, lang: str, device: str
 ) -> List[Callable]:
     augmentation_sequence = []
+    action = "delete"
     for aug in augmentations:
-        if aug == "random" or aug == "synonym":
+        if "random" in aug or "synonym" in aug:
+            if "swap" in aug or "swp" in aug:
+                action = "swap"
             augmenter = SentenceAugmenter(aug, action=action)
             augmentation_sequence.append(lambda x: augmenter.augment_sentences(x))
         elif aug == "translate":

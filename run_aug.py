@@ -25,15 +25,8 @@ if __name__ == "__main__":
         nargs="+",
         type=str,
         required=True,
-        choices=["random", "translate", "synonym"],
+        choices=["translate", "synonym", "random_swap", "random_del"],
         help="Augmentation type to perform",
-    )
-    parser.add_argument(
-        "--action",
-        type=str,
-        choices=["delete", "swap"],
-        default="delete",
-        help="Action to perform",
     )
     parser.add_argument(
         "--maxs",
@@ -81,7 +74,7 @@ if __name__ == "__main__":
     print(f"Read {len(sentences)} sentences from {args.corpus}")
 
     augmentation_sequence = create_augmentation_sequence(
-        args.aug, args.action, args.translate_mode, args.lang, args.device
+        args.aug, args.translate_mode, args.lang, args.device
     )
 
     augmented_sentences = sentences
