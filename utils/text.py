@@ -4,6 +4,41 @@ import re
 from typing import List
 from num2words import num2words
 
+STOPWORDS = [
+    "o",
+    "a",
+    "à",
+    "e",
+    "é",
+    "de",
+    "do",
+    "da",
+    "das",
+    "dos",
+    "em",
+    "que",
+    "para",
+    "os",
+    "as",
+    "um",
+    "uma",
+    "uns",
+    "umas",
+    "no",
+    "na",
+    "nos",
+    "nas",
+    "com",
+    "por",
+    "se",
+    "não",
+    "mais",
+    "como",
+    "foi",
+    "ser",
+    "são",
+    "sua",
+]
 
 replacement_dict = {
     # Warning: order matters!
@@ -57,6 +92,8 @@ reverse_replacement_dict = {
     "-": "",
     "/": " barra ",
     '"': "",
+    "[unk]": "",
+    "[UNK]": "",
 }
 
 
@@ -75,6 +112,21 @@ def add_period_and_capitalize(sentence: str) -> str:
         sentence += "."
     sentences = sentence.split(".")
     return ". ".join(s.strip().capitalize() for s in sentences).strip()
+
+
+def remove_non_alphabet_words(input_string: str) -> str:
+    """
+    Removes non-alphabetic characters from a string.
+
+    Args:
+        input_string (str): The input string.
+
+    Returns:
+        str: String with non-alphabetic characters remove.
+    """
+    words = re.findall(r"\b[A-Za-z]+\b", input_string)
+    cleaned_string = " ".join(words)
+    return cleaned_string
 
 
 def pre_process_sentences(sentences: List[str]) -> List[str]:
@@ -146,7 +198,8 @@ def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
         post_processed_sentences.append(sentence.strip())
 
     post_processed_sentences = [
-        " ".join(sentence.split()) for sentence in post_processed_sentences
+        " ".join(remove_non_alphabet_words(sentence).split())
+        for sentence in post_processed_sentences
     ]
     return post_processed_sentences
 

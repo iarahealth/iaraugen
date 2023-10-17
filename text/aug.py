@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 import torch
+
 from typing import List, Callable
 from deep_translator import GoogleTranslator
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from nlpaug.augmenter.word import RandomWordAug, SynonymAug
 from tqdm import tqdm
+from utils.files import download_and_extract
+from utils.text import STOPWORDS
+from nlpaug.augmenter.word import (
+    RandomWordAug,
+    SynonymAug,
+    AntonymAug,
+    ContextualWordEmbsAug,
+    WordEmbsAug,
+)
 
 
 class SentenceAugmenter:
@@ -16,33 +25,76 @@ class SentenceAugmenter:
         aug_min: int = 1,
         aug_max: int = 10,
         aug_p: float = 0.3,
+        device: str = "cpu",
     ):
         self.lang = lang
         self.action = action
         self.aug_min = aug_min
         self.aug_max = aug_max
         self.aug_p = aug_p
+        self.device = device
+
         if "random" in augmenter_type:
             self.augmenter = RandomWordAug(
                 action=self.action,
                 aug_min=self.aug_min,
                 aug_max=self.aug_max,
                 aug_p=self.aug_p,
+                # stopwords=STOPWORDS,
             )
         elif augmenter_type == "synonym":
             self.augmenter = SynonymAug(
+                # aug_src="ppdb",
+                # model_path="ppdb-1.0-xxxl-lexical",
                 aug_src="wordnet",
                 aug_min=self.aug_min,
                 aug_max=self.aug_max,
                 aug_p=self.aug_p,
                 lang=self.lang,
+                # stopwords=STOPWORDS,
+            )
+        elif augmenter_type == "antonym":
+            self.augmenter = AntonymAug(
+                aug_min=self.aug_min,
+                aug_max=self.aug_max,
+                aug_p=self.aug_p,
+                lang=self.lang,
+                # stopwords=STOPWORDS,
+            )
+        elif "embed_bert" in augmenter_type:
+            self.augmenter = ContextualWordEmbsAug(
+                model_path="neuralmind/bert-large-portuguese-cased",
+                # model_path="bert-base-multilingual-cased",
+                action=self.action,
+                aug_min=self.aug_min,
+                aug_max=self.aug_max,
+                aug_p=self.aug_p,
+                device=self.device,
+                batch_size=32,
+            )
+        elif "embed" in augmenter_type:
+            # Warning: this method sucks.
+            download_and_extract(
+                "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.pt.300.vec.gz",
+                "cc.pt.300.vec",
+            )
+            self.augmenter = WordEmbsAug(
+                model_type="fasttext",
+                model_path="cc.pt.300.vec",
+                action=self.action,
+                aug_min=self.aug_min,
+                aug_max=self.aug_max,
+                aug_p=self.aug_p,
             )
         else:
             raise ValueError("Invalid augmenter_type")
 
     def augment_sentences(self, sentences: List[str]) -> List[str]:
         print(f"Augmenting {len(sentences)} sentences with {self.augmenter}...")
-        return self.augmenter.augment(sentences)
+        augmented_sentences = self.augmenter.augment(sentences)
+        if augmented_sentences == sentences:
+            print("Warning: augmented sentences are equal to original sentences")
+        return augmented_sentences
 
 
 def backtranslate_sentences_api(
@@ -152,17 +204,40 @@ def translation_pipeline(
 def create_augmentation_sequence(
     augmentations: List[str], translate_mode: str, lang: str, device: str
 ) -> List[Callable]:
+    """
+    Creates an augmentation sequence based on a list of augmentation techniques.
+
+    This function generates a sequence of augmentation functions to be applied to input sentences.
+    It supports various text augmentation techniques.
+
+    Args:
+        augmentations (List[str]): A list of augmentation techniques to apply.
+        translate_mode (str): The translation mode when using translation augmentation techniques.
+                              'local' uses a local model, for example.
+        lang (str): The language code to be used for translation.
+        device (str): The device to use for translation (e.g., 'cpu' or 'cuda').
+
+    Returns:
+        List[Callable]: A list of callable functions, where each function represents an augmentation
+        technique to apply to input sentences.
+    """
     augmentation_sequence = []
     action = "delete"
     for aug in augmentations:
-        if "random" in aug or "synonym" in aug:
+        if "random" in aug or "nym" in aug or "embed" in aug:
             if "swap" in aug or "swp" in aug:
                 action = "swap"
+            elif "del" in aug or "delete" in aug:
+                action = "delete"
+            elif "subs" in aug or "substitute" in aug:
+                action = "substitute"
+            elif "ins" in aug or "insert" in aug:
+                action = "insert"
             augmenter = SentenceAugmenter(aug, action=action)
             augmentation_sequence.append(
                 lambda x, augmenter=augmenter: augmenter.augment_sentences(x)
             )
-        elif aug == "translate":
+        elif aug == "translate" or aug == "backtranslate":
             augmentation_sequence.append(
                 lambda x: translation_pipeline(x, translate_mode, lang, device)
             )

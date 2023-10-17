@@ -25,7 +25,17 @@ if __name__ == "__main__":
         nargs="+",
         type=str,
         required=True,
-        choices=["translate", "synonym", "random_swap", "random_del"],
+        choices=[
+            "translate",
+            "synonym",
+            "antonym",
+            "random_swap",
+            "random_del",
+            "embed_bert_subs",
+            "embed_bert_ins",
+            "embed_subs",
+            "embed_ins",
+        ],
         help="Augmentation type to perform",
     )
     parser.add_argument(

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-import re
+import requests
+import gzip
 
+from pathlib import Path
 from typing import List, Optional
-from .text import replacement_dict, add_period_and_capitalize, pre_process_sentences
+from .text import pre_process_sentences
 
 
 def read_sentences_corpus(
@@ -45,7 +47,7 @@ def read_sentences_corpus(
     return sentences
 
 
-def append_sentences_to_file(filename: str, sentences: List[str]):
+def append_sentences_to_file(filename: str, sentences: List[str]) -> None:
     """
     Appends sentences to a file.
 
@@ -61,3 +63,24 @@ def append_sentences_to_file(filename: str, sentences: List[str]):
 def read_file(filename: str) -> List[str]:
     with open(filename, "r", encoding="utf-8") as f:
         return f.readlines()
+
+
+def download_and_extract(url: str, target_file: str) -> None:
+    if not Path(target_file).exists():
+        print(f"Downloading file from {url}...")
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            with open(target_file, "wb") as file:
+                file.write(response.content)
+
+            # Extract the downloaded file
+            with gzip.open(target_file, "rb") as gz_file:
+                with open(target_file[:-3], "wb") as output_file:
+                    output_file.write(gz_file.read())
+
+            print(f"File '{target_file}' downloaded and extracted successfully.")
+        else:
+            print(
+                f"Failed to download the file from {url}. Status code: {response.status_code}"
+            )
