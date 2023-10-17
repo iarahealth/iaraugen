@@ -198,11 +198,7 @@ def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
         post_processed_sentences.append(sentence.strip())
 
     post_processed_sentences = [
-        " ".join(
-            remove_non_alphabet_words(
-                re.sub(r"(?<=\w)á(?=\s|$)", "à", sentence)
-            ).split()
-        )
+        " ".join(remove_non_alphabet_words(re.sub(r"\bá\b", "à", sentence)).split())
         for sentence in post_processed_sentences
     ]
     return post_processed_sentences
