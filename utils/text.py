@@ -74,6 +74,9 @@ replacement_dict = {
     "fechar parêntese": ")",
     "fecha parênteses": ")",
     "fecha parêntese": ")",
+    "uma cruz": "+",
+    "duas cruzes": "++",
+    "três cruzes": "+++",
 }
 
 reverse_replacement_dict = {
@@ -92,6 +95,9 @@ reverse_replacement_dict = {
     "-": "",
     "/": " barra ",
     '"': "",
+    "+++": "três cruzes",
+    "++": "duas cruzes",
+    "+": "uma cruz",
     "[unk]": "",
     "[UNK]": "",
 }
@@ -108,7 +114,7 @@ def add_period_and_capitalize(sentence: str) -> str:
     Returns:
         str: The modified sentence with added period and capitalized.
     """
-    if sentence[-1] not in ["...", ".", ":", "!", "?", ";", ",", "--", "-", "/"]:
+    if sentence[-1] not in ["...", ".", ":", "!", "?", ";", ",", "--", "-", "/", "+"]:
         sentence += "."
     sentences = sentence.split(".")
     return ". ".join(s.strip().capitalize() for s in sentences).strip()

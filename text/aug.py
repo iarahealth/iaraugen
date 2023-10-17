@@ -5,8 +5,9 @@ from typing import List, Callable
 from deep_translator import GoogleTranslator
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from tqdm import tqdm
-from utils.files import download_and_extract
-from utils.text import STOPWORDS
+
+# from utils.files import download_and_extract
+# from utils.text import STOPWORDS
 from nlpaug.augmenter.word import (
     RandomWordAug,
     SynonymAug,
@@ -74,10 +75,10 @@ class SentenceAugmenter:
             )
         elif "embed" in augmenter_type:
             # Warning: this method sucks.
-            download_and_extract(
-                "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.pt.300.vec.gz",
-                "cc.pt.300.vec",
-            )
+            # download_and_extract(
+            #    "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.pt.300.vec.gz",
+            #    "cc.pt.300.vec",
+            # )
             self.augmenter = WordEmbsAug(
                 model_type="fasttext",
                 model_path="cc.pt.300.vec",
