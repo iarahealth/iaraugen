@@ -134,7 +134,20 @@ def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
             else:
                 if random.random() < 0.25:
                     sentence += random.choice([" parágrafo", " nova linha"])
+        if sentence in [
+            "",
+            "ponto",
+            "parágrafo",
+            "ponto parágrafo",
+            "nova linha",
+            "ponto nova linha",
+        ]:
+            continue
         post_processed_sentences.append(sentence.strip())
+
+    post_processed_sentences = [
+        " ".join(sentence.split()) for sentence in post_processed_sentences
+    ]
     return post_processed_sentences
 
 
