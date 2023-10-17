@@ -92,9 +92,9 @@ if __name__ == "__main__":
         print(f"Augmentation step {i + 1} of {len(augmentation_sequence)}:")
         augmented_sentences = aug_fn(augmented_sentences)
 
+    print_sentences_comparison(sentences, augmented_sentences)
     augmented_sentences = post_process_sentences(augmented_sentences)
     sentences = post_process_sentences(sentences)
-    print_sentences_comparison(sentences, augmented_sentences)
 
     print("Removing equal sentences...")
     augmented_sentences = remove_equal_sentences(sentences, augmented_sentences)

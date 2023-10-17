@@ -108,7 +108,7 @@ def add_period_and_capitalize(sentence: str) -> str:
     Returns:
         str: The modified sentence with added period and capitalized.
     """
-    if sentence[-1] != ".":
+    if sentence[-1] not in ["...", ".", ":", "!", "?", ";", ",", "--", "-", "/"]:
         sentence += "."
     sentences = sentence.split(".")
     return ". ".join(s.strip().capitalize() for s in sentences).strip()
@@ -124,7 +124,7 @@ def remove_non_alphabet_words(input_string: str) -> str:
     Returns:
         str: String with non-alphabetic characters remove.
     """
-    words = re.findall(r"\b[A-Za-z]+\b", input_string)
+    words = re.findall(r"\b[A-Za-zÀ-ÖØ-öø-ÿ]+\b", input_string)
     cleaned_string = " ".join(words)
     return cleaned_string
 
@@ -198,7 +198,11 @@ def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
         post_processed_sentences.append(sentence.strip())
 
     post_processed_sentences = [
-        " ".join(remove_non_alphabet_words(sentence).split())
+        " ".join(
+            remove_non_alphabet_words(
+                re.sub(r"(?<=\w)á(?=\s|$)", "à", sentence)
+            ).split()
+        )
         for sentence in post_processed_sentences
     ]
     return post_processed_sentences
