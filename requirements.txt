@@ -9,3 +9,6 @@ nltk
 num2words
 tqdm
 gensim
+librosa
+pydub
+audiomentations
