@@ -7,7 +7,7 @@ import soundfile as sf
 
 from pathlib import Path
 from pydub import AudioSegment
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 from .text import pre_process_sentences
 
 
@@ -90,7 +90,7 @@ def download_and_extract(url: str, target_file: str) -> None:
             )
 
 
-def load_audio(audio_file: str) -> Union[tuple, None]:
+def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
     """
     Read an audio file using Librosa. Convert to WAV if not in WAV format.
 
@@ -115,7 +115,7 @@ def load_audio(audio_file: str) -> Union[tuple, None]:
         return y, sr
     except Exception as e:
         print(f"Error loading or converting the audio file: {e}")
-        return None
+        raise e
 
 
 def save_audio(

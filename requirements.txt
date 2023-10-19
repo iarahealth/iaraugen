@@ -9,6 +9,7 @@ nltk
 num2words
 tqdm
 gensim
+soundfile
 librosa
 pydub
 audiomentations

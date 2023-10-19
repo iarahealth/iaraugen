@@ -2,7 +2,8 @@
 
 import argparse
 import os
-import audiomentations as AA
+import random
+import numpy as np
 
 from audio.aug import apply_augmentation
 from utils.files import load_audio, save_audio
@@ -32,12 +33,18 @@ if __name__ == "__main__":
         nargs="+",
         help="Audiomentation techniques (e.g., AddGaussianNoise, PitchShift, TimeStretch)",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for reproducible augmentations (default: None, generates a random seed)",
+    )
 
     args = parser.parse_args()
 
-    if not os.path.exists(args.input_file):
-        print(f"Input file '{args.input_file}' does not exist.")
-        exit(1)
+    if args.seed is not None:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
 
     audio, sr = load_audio(args.input_file)
 
