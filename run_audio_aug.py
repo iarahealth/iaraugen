@@ -18,7 +18,7 @@ def process_audio(input_file: str, augmentations: List[str], output_format: str)
     augmented_audio, transforms_used = apply_augmentation(audio, sr, augmentations)
 
     if len(transforms_used) > 0:
-        output_filename = output_filename + "_" + "_".join(transforms_used)
+        output_filename = output_filename + "-aug_" + "_".join(transforms_used)
         input_dir = os.path.dirname(input_file)
         output_path = os.path.join(input_dir, f"{output_filename}.{output_format}")
         save_audio(augmented_audio, output_path, sr, output_format)
