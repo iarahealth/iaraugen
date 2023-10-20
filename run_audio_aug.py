@@ -6,9 +6,10 @@ import random
 import numpy as np
 
 from multiprocessing import Pool, cpu_count
+from typing import List
+
 from audio.aug import apply_augmentation, AUG_PARAMS
 from utils.files import load_audio, save_audio
-from typing import List
 
 
 def process_audio(input_file: str, augmentations: List[str], output_format: str):
@@ -18,8 +19,10 @@ def process_audio(input_file: str, augmentations: List[str], output_format: str)
 
     if len(transforms_used) > 0:
         output_filename = output_filename + "_" + "_".join(transforms_used)
-        save_audio(augmented_audio, output_filename, sr, output_format)
-        print(f"Augmented audio saved to {output_filename}.{output_format}")
+        input_dir = os.path.dirname(input_file)
+        output_path = os.path.join(input_dir, f"{output_filename}.{output_format}")
+        save_audio(augmented_audio, output_path, sr, output_format)
+        print(f"Augmented audio saved to {output_path}")
 
 
 if __name__ == "__main__":
