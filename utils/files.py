@@ -92,7 +92,7 @@ def download_and_extract(url: str, target_file: str) -> None:
 
 def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
     """
-    Read an audio file using Librosa. Convert to WAV if not in WAV format.
+    Read an audio file using Librosa.
 
     Parameters:
     audio_file (str): The path to the audio file.
@@ -102,19 +102,10 @@ def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
     If an error occurs during loading, the function returns None.
     """
     try:
-        file_extension = audio_file.split(".")[-1]
-
-        if file_extension.lower() != "wav":
-            wav_audio_file = audio_file.replace(file_extension, "wav")
-            audio = AudioSegment.from_file(audio_file)
-            audio.export(wav_audio_file, format="wav")
-            y, sr = librosa.load(wav_audio_file)
-        else:
-            y, sr = librosa.load(audio_file)
-
+        y, sr = librosa.load(audio_file)
         return y, sr
     except Exception as e:
-        print(f"Error loading or converting the audio file: {e}")
+        print(f"Error loading the audio file: {e}")
         raise e
 
 
