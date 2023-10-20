@@ -29,6 +29,12 @@ AUG_PARAMS = {
         "duration_unit": "fraction",
         "p": 0.8,
     },
+    "Mp3Compression": {
+        "min_bitrate": 8,
+        "max_bitrate": 64,
+        "backend": "pydub",
+        "p": 0.8,
+    },
     "Normalize": {"p": 0.8},
     "TimeStretch": {"min_rate": 0.8, "max_rate": 1.25, "p": 0.8},
     "PitchShift": {"min_semitones": -0.5, "max_semitones": 0.5, "p": 0.8},
