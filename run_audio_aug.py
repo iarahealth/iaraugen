@@ -5,8 +5,21 @@ import os
 import random
 import numpy as np
 
+from multiprocessing import Pool, cpu_count
 from audio.aug import apply_augmentation, AUG_PARAMS
 from utils.files import load_audio, save_audio
+from typing import List
+
+
+def process_audio(input_file: str, augmentations: List[str], output_format: str):
+    audio, sr = load_audio(input_file)
+    output_filename = os.path.splitext(os.path.basename(input_file))[0]
+    augmented_audio, transforms_used = apply_augmentation(audio, sr, augmentations)
+
+    if len(transforms_used) > 0:
+        output_filename = output_filename + "_" + "_".join(transforms_used)
+        save_audio(augmented_audio, output_filename, sr, output_format)
+        print(f"Augmented audio saved to {output_filename}.{output_format}")
 
 
 if __name__ == "__main__":
@@ -42,26 +55,12 @@ if __name__ == "__main__":
         random.seed(args.seed)
         np.random.seed(args.seed)
 
-    audios = []
-    srs = []
-    output_filenames = []
-    for input_file in args.input_file:
-        audio, sr = load_audio(input_file)
-        output_filename = os.path.splitext(os.path.basename(input_file))[0]
-        audios.append(audio)
-        srs.append(sr)
-        output_filenames.append(output_filename)
+    input_args = [
+        (input_file, args.augmentations, args.output_format)
+        for input_file in args.input_file
+    ]
 
-    for audio, sr, output_filename in zip(audios, srs, output_filenames):
-        augmented_audio, transforms_used = apply_augmentation(
-            audio, sr, args.augmentations
-        )
-        if len(transforms_used) > 0:
-            output_filename = output_filename + "_" + "_".join(transforms_used)
-            save_audio(
-                augmented_audio,
-                output_filename,
-                sr,
-                args.output_format,
-            )
-            print(f"Augmented audio saved to {output_filename}.{args.output_format}")
+    pool = Pool(processes=cpu_count())
+    pool.starmap(process_audio, input_args)
+    pool.close()
+    pool.join()

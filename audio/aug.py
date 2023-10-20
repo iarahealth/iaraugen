@@ -2,12 +2,9 @@
 import audiomentations as AA
 import numpy as np
 
-# import os
-
 from audiomentations import Compose
 from typing import List, Tuple
 
-# from multiprocessing import Pool
 
 AUG_PARAMS = {
     # See a list of possible transforms here: https://iver56.github.io/audiomentations/
@@ -66,22 +63,3 @@ def apply_augmentation(
             transforms_used.append(transform.__class__.__name__)
 
     return augmented_samples, transforms_used
-
-
-"""
-def apply_augmentation_batch(
-    samples: List[np.ndarray], sample_rates: List[float], augmentations: List[str]
-):
-    if isinstance(samples, list) and len(samples) > 1:
-        with Pool(processes=os.cpu_count()) as pool:
-            augmented_samples = pool.starmap(
-                apply_augmentation,
-                [
-                    (sample, augmentations, sr)
-                    for sample, sr in zip(samples, sample_rates)
-                ],
-            )
-        return augmented_samples
-    else:
-        return apply_augmentation(samples[0], sample_rates[0], augmentations)
-"""
