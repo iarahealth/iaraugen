@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import audiomentations as AA
 import numpy as np
+import librosa
 
 from audiomentations import Compose
+from noisereduce import reduce_noise
 from typing import List, Tuple
 
 
@@ -42,8 +44,18 @@ AUG_PARAMS = {
 }
 
 
+def clean_audio(samples: np.ndarray, sample_rate: int) -> np.ndarray:
+    samples = reduce_noise(y=samples, sr=sample_rate)
+    samples = librosa.util.normalize(samples)  # Peak normalization
+    return samples
+
+
+def resample(samples: np.ndarray, sample_rate: int, new_sample_rate: int) -> np.ndarray:
+    return librosa.resample(samples, orig_sr=sample_rate, target_sr=new_sample_rate)
+
+
 def apply_augmentation(
-    samples: np.ndarray, sample_rate: float, augmentations: List[str]
+    samples: np.ndarray, sample_rate: int, augmentations: List[str]
 ) -> Tuple[np.ndarray, List[str]]:
     augmentation_list = []
 

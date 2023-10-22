@@ -6,8 +6,7 @@ import librosa
 import soundfile as sf
 
 from pathlib import Path
-from pydub import AudioSegment
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple
 from .text import pre_process_sentences
 
 
@@ -90,7 +89,9 @@ def download_and_extract(url: str, target_file: str) -> None:
             )
 
 
-def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
+def load_audio(
+    audio_file: str, sample_rate: Optional[int] = None
+) -> Tuple[np.ndarray, int]:
     """
     Read an audio file using Librosa.
 
@@ -102,7 +103,7 @@ def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
     If an error occurs during loading, the function returns None.
     """
     try:
-        y, sr = librosa.load(audio_file)
+        y, sr = librosa.load(audio_file, sr=sample_rate)
         return y, sr
     except Exception as e:
         print(f"Error loading the audio file: {e}")
@@ -110,7 +111,7 @@ def load_audio(audio_file: str) -> Tuple[np.ndarray, float]:
 
 
 def save_audio(
-    audio: np.ndarray, output_path: str, sample_rate, fformat: str = "ogg"
+    audio: np.ndarray, output_path: str, sample_rate: int, fformat: str = "ogg"
 ) -> None:
     """
     Save audio data using soundfile.

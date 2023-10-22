@@ -13,3 +13,4 @@ soundfile
 librosa
 pydub
 audiomentations
+noisereduce
