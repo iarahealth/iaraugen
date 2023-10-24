@@ -8,4 +8,3 @@ nlpaug
 nltk
 num2words
 tqdm
-gensim
