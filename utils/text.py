@@ -152,9 +152,10 @@ def pre_process_sentences(sentences: List[str]) -> List[str]:
         s = s.strip()
         s = add_period_and_capitalize(s)
         # "Glue" the punctuation marks to the previous character.
-        s = re.sub(r"\s+([.,;!?:)]|(\.{3,}))", r"\1", s)
-        # "Glue" the ( to the next character.
+        s = re.sub(r"\s+([.,;!?:)}]|(\.{3,}))", r"\1", s)
+        # "Glue" the ( and { to the next character.
         s = re.sub(r"\(\s*(\w)", r"(\1", s)
+        s = re.sub(r"\{\s*(\w)", r"{\1", s)  # Glue "{" to the next character
         sentences_processed.append(s)
     return sentences_processed
 
