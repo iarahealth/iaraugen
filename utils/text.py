@@ -156,7 +156,7 @@ def remove_non_alphabet_words(input_string: str) -> str:
     return cleaned_string
 
 
-def pre_process_sentences(sentences: List[str]) -> List[str]:
+def pre_process_sentences(sentences: List[str], add_period: bool = False) -> List[str]:
     sentences_processed = []
     for s in sentences:
         s = s.strip()
@@ -165,7 +165,7 @@ def pre_process_sentences(sentences: List[str]) -> List[str]:
         if s.isspace() or s == "":
             continue
         s = s.strip()
-        s = add_period_and_capitalize(s)
+        s = add_period_and_capitalize(s, add_period)
         # "Glue" the punctuation marks to the previous character.
         s = re.sub(r"\s+([.,;!?:)}]|(\.{3,}))", r"\1", s)
         # "Glue" the ( and { to the next character.
