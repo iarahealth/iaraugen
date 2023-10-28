@@ -74,6 +74,10 @@ replacement_dict = {
     "fechar parêntese": ")",
     "fecha parênteses": ")",
     "fecha parêntese": ")",
+    "abre chaves": "{",
+    "fecha chaves": "}",
+    "abre chave": "{",
+    "fecha chave": "}",
     "uma cruz": "+",
     "duas cruzes": "++",
     "três cruzes": "+++",
@@ -98,12 +102,14 @@ reverse_replacement_dict = {
     "+++": "três cruzes",
     "++": "duas cruzes",
     "+": "uma cruz",
+    "{": "abre chaves ",
+    "}": "fecha chaves ",
     "[unk]": "",
     "[UNK]": "",
 }
 
 
-def add_period_and_capitalize(sentence: str) -> str:
+def add_period_and_capitalize(sentence: str, add_period: bool = False) -> str:
     """
     Adds a period at the end of the sentence if it doesn't already have one,
     capitalizes the sentences, and returns the modified sentence.
@@ -114,8 +120,23 @@ def add_period_and_capitalize(sentence: str) -> str:
     Returns:
         str: The modified sentence with added period and capitalized.
     """
-    if sentence[-1] not in ["...", ".", ":", "!", "?", ";", ",", "--", "-", "/", "+"]:
-        sentence += "."
+    if add_period:
+        if sentence[-1] not in [
+            "...",
+            ".",
+            ":",
+            "!",
+            "?",
+            ";",
+            ",",
+            "--",
+            "-",
+            "/",
+            "+",
+            "(",
+            "{",
+        ]:
+            sentence += "."
     sentences = sentence.split(".")
     return ". ".join(s.strip().capitalize() for s in sentences).strip()
 
@@ -135,7 +156,7 @@ def remove_non_alphabet_words(input_string: str) -> str:
     return cleaned_string
 
 
-def pre_process_sentences(sentences: List[str]) -> List[str]:
+def pre_process_sentences(sentences: List[str], add_period: bool = False) -> List[str]:
     sentences_processed = []
     for s in sentences:
         s = s.strip()
@@ -144,16 +165,17 @@ def pre_process_sentences(sentences: List[str]) -> List[str]:
         if s.isspace() or s == "":
             continue
         s = s.strip()
-        s = add_period_and_capitalize(s)
+        s = add_period_and_capitalize(s, add_period)
         # "Glue" the punctuation marks to the previous character.
-        s = re.sub(r"\s+([.,;!?:)]|(\.{3,}))", r"\1", s)
-        # "Glue" the ( to the next character.
+        s = re.sub(r"\s+([.,;!?:)}]|(\.{3,}))", r"\1", s)
+        # "Glue" the ( and { to the next character.
         s = re.sub(r"\(\s*(\w)", r"(\1", s)
+        s = re.sub(r"\{\s*(\w)", r"{\1", s)  # Glue "{" to the next character
         sentences_processed.append(s)
     return sentences_processed
 
 
-def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
+def post_process_sentences(sentences: List[str], modify: bool = True) -> List[str]:
     """
     Post-processes a list of sentences by changing punctuation marks back to words
     and applying additional modifications.

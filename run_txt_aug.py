@@ -26,6 +26,7 @@ if __name__ == "__main__":
         type=str,
         required=True,
         choices=[
+            "backtranslate",
             "translate",
             "synonym",
             "antonym",
