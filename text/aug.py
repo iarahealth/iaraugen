@@ -122,7 +122,7 @@ def backtranslate_sentences_api(
     skips_count = 0
     for sentence in tqdm(sentences):
         # If the sentence is composed only of special characters, skip it
-        if re.match(r"^[^\w\s\d]+$", sentence):
+        if re.fullmatch(r"[\s\W]*", sentence):
             continue
         if skips_count > 30:
             print(
@@ -192,7 +192,7 @@ def backtranslate_sentences_local(
     print(f"Backtranslating {len(sentences)} sentences...")
     translations: List[str] = []
     for sentence in tqdm(sentences):
-        if re.match(r"^[^\w\s\d]+$", sentence):
+        if re.fullmatch(r"[\s\W]*", sentence):
             continue
         transl = pten_pipeline("translate Portuguese to English: " + sentence)[0][
             "generated_text"
