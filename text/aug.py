@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import torch
+import re
 
 from typing import List, Callable
 from deep_translator import GoogleTranslator
@@ -113,10 +114,37 @@ def backtranslate_sentences_api(
     Returns:
         List[str]: A list of backtranslated sentences.
     """
+    # proxies = {"http": None, "https": None}
     translator = GoogleTranslator(source=source_lang, target=target_lang)
-    translations = translator.translate_batch(sentences)
     backtranslator = GoogleTranslator(source=target_lang, target=source_lang)
-    backtranslations = backtranslator.translate_batch(translations)
+    backtranslations = []
+
+    skips_count = 0
+    for sentence in tqdm(sentences):
+        # If the sentence is composed only of special characters, skip it
+        if re.match(r"^[^\w\s\d]+$", sentence):
+            continue
+        if skips_count > 30:
+            print(
+                "[x] Too many translations skipped in a row. IP blocked? Aborting the program."
+            )
+            exit(1)
+        try:
+            translation = translator.translate(sentence)
+        except Exception as e:
+            print(f"[!] Skipping translating sentence '{sentence}': {e}")
+            skips_count += 1
+            continue
+        try:
+            backtranslator = backtranslator.translate(translation)
+        except Exception as e:
+            print(f"[!] Skipping backtranslating sentence '{translation}': {e}")
+            skips_count += 1
+            continue
+        skips_count = 0
+        backtranslation = backtranslator.translate(translation)
+        backtranslations.append(backtranslation)
+        print(f"{sentence} -> {translation} -> {backtranslation}")
 
     return backtranslations
 
@@ -164,6 +192,8 @@ def backtranslate_sentences_local(
     print(f"Backtranslating {len(sentences)} sentences...")
     translations: List[str] = []
     for sentence in tqdm(sentences):
+        if re.match(r"^[^\w\s\d]+$", sentence):
+            continue
         transl = pten_pipeline("translate Portuguese to English: " + sentence)[0][
             "generated_text"
         ]

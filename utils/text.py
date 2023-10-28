@@ -109,7 +109,7 @@ reverse_replacement_dict = {
 }
 
 
-def add_period_and_capitalize(sentence: str) -> str:
+def add_period_and_capitalize(sentence: str, add_period: bool = False) -> str:
     """
     Adds a period at the end of the sentence if it doesn't already have one,
     capitalizes the sentences, and returns the modified sentence.
@@ -120,8 +120,23 @@ def add_period_and_capitalize(sentence: str) -> str:
     Returns:
         str: The modified sentence with added period and capitalized.
     """
-    if sentence[-1] not in ["...", ".", ":", "!", "?", ";", ",", "--", "-", "/", "+", "(", "{"]:
-        sentence += "."
+    if add_period:
+        if sentence[-1] not in [
+            "...",
+            ".",
+            ":",
+            "!",
+            "?",
+            ";",
+            ",",
+            "--",
+            "-",
+            "/",
+            "+",
+            "(",
+            "{",
+        ]:
+            sentence += "."
     sentences = sentence.split(".")
     return ". ".join(s.strip().capitalize() for s in sentences).strip()
 
@@ -160,7 +175,7 @@ def pre_process_sentences(sentences: List[str]) -> List[str]:
     return sentences_processed
 
 
-def post_process_sentences(sentences: List[str], modify=True) -> List[str]:
+def post_process_sentences(sentences: List[str], modify: bool = True) -> List[str]:
     """
     Post-processes a list of sentences by changing punctuation marks back to words
     and applying additional modifications.
