@@ -78,6 +78,7 @@ replacement_dict = {
     "fecha chaves": "}",
     "abre chave": "{",
     "fecha chave": "}",
+    "barra": "/",
     "uma cruz": "+",
     "duas cruzes": "++",
     "três cruzes": "+++",
