@@ -173,6 +173,7 @@ def translate_sentences_api(
             ).replace(",", "")
             translation = translation.lower().strip()
             translation = re.findall(r"\b[A-Za-zÀ-ÖØ-öø-ÿ]+\b", translation)
+
             if target_lang == "en":
                 translation = replace_period_comma_with_dot(translation)
             translation = " ".join(translation)

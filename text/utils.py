@@ -82,6 +82,8 @@ def post_process_sentences(
 
     Args:
         sentences (List[str]): The list of sentences to be post-processed.
+        lang (str, optional): The language of the sentences. Defaults to "pt".
+        modify (bool, optional): Whether to apply additional modifications to the
 
     Returns:
         List[str]: A list of post-processed sentences.
@@ -93,35 +95,75 @@ def post_process_sentences(
             sentence = sentence.replace(punctuation, word)
         sentence = re.sub(
             r"\d+",
-            lambda x: num2words(int(x.group()), lang="pt_BR", to="cardinal"),
+            lambda x: num2words(
+                int(x.group()), lang="pt_BR" if lang == "pt" else lang, to="cardinal"
+            ),
             sentence,
         ).replace(",", "")
         sentence = sentence.lower().strip()
         if modify and len(original_sentence.split()) > 1:
-            if sentence.endswith("ponto") and random.random() < 0.33:
-                sentence = sentence[:-6]  # Remove "ponto" from the end
+            if (
+                sentence.endswith("ponto")
+                or sentence.endswith("punto")
+                or sentence.endswith("period")
+            ) and random.random() < 0.33:
+                sentence = " ".join(sentence.split()[:-1])  # Remove period
             if random.random() < 0.25:
-                sentence = random.choice(
-                    ["parágrafo " + sentence, "nova linha " + sentence]
-                )
+                if lang == "pt":
+                    sentence = random.choice(
+                        ["parágrafo " + sentence, "nova linha " + sentence]
+                    )
+                elif lang == "en":
+                    sentence = random.choice(
+                        ["paragraph " + sentence, "new line " + sentence]
+                    )
+                elif lang == "es":
+                    sentence = random.choice(
+                        ["párrafo " + sentence, "nueva línea " + sentence]
+                    )
             elif random.random() < 0.25:
-                sentence = random.choice(
-                    ["ponto parágrafo " + sentence, "ponto nova linha " + sentence]
-                )
-            if not sentence.endswith("ponto"):
+                if lang == "pt":
+                    sentence = random.choice(
+                        ["ponto parágrafo " + sentence, "ponto nova linha " + sentence]
+                    )
+                elif lang == "en":
+                    sentence = random.choice(
+                        ["period paragraph " + sentence, "period new line " + sentence]
+                    )
+                elif lang == "es":
+                    sentence = random.choice(
+                        [
+                            "punto párrafo " + sentence,
+                            "punto nueva línea " + sentence,
+                        ]
+                    )
+            if (
+                not sentence.endswith("ponto")
+                or not sentence.endswith("punto")
+                or not sentence.endswith("period")
+            ):
                 if random.random() < 0.25:
-                    sentence += random.choice([" ponto parágrafo", " ponto nova linha"])
+                    if lang == "pt":
+                        sentence += random.choice(
+                            [" ponto parágrafo", " ponto nova linha"]
+                        )
+                    elif lang == "en":
+                        sentence += random.choice(
+                            [" period paragraph", " period new line"]
+                        )
+                    elif lang == "es":
+                        sentence += random.choice(
+                            [" punto párrafo", " punto nueva línea"]
+                        )
             else:
                 if random.random() < 0.25:
-                    sentence += random.choice([" parágrafo", " nova linha"])
-        if sentence in [
-            "",
-            "ponto",
-            "parágrafo",
-            "ponto parágrafo",
-            "nova linha",
-            "ponto nova linha",
-        ]:
+                    if lang == "pt":
+                        sentence += random.choice([" parágrafo", " nova linha"])
+                    elif lang == "en":
+                        sentence += random.choice([" paragraph", " new line"])
+                    elif lang == "es":
+                        sentence += random.choice([" párrafo", " nueva línea"])
+        if sentence in ["", " "]:
             continue
         post_processed_sentences.append(sentence.strip())
 
