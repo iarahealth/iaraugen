@@ -87,9 +87,9 @@ replacement_dict = {
 reverse_replacement_dict = {
     # Warning: order matters!
     "...": " reticências",
-    ".": " ponto",
+    ".": " ponto ",
     ":": " dois pontos",
-    ",": " vírgula",
+    ",": " vírgula ",
     ";": " ponto e vírgula",
     "\n": " parágrafo",
     "‒-": " travessão",
