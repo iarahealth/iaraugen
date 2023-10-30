@@ -7,7 +7,7 @@ import soundfile as sf
 
 from pathlib import Path
 from typing import List, Optional, Tuple
-from .text import pre_process_sentences
+from text.utils import pre_process_sentences
 
 
 def read_sentences_corpus(

@@ -2,7 +2,7 @@
 import argparse
 import random
 from text.aug import create_augmentation_sequence, translate_sentences_api
-from utils.text import (
+from text.utils import (
     post_process_sentences,
     print_sentences_comparison,
     remove_equal_sentences,
