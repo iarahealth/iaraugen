@@ -11,7 +11,7 @@ from text.utils import pre_process_sentences
 
 
 def read_sentences_corpus(
-    filename: str, max_sentences: Optional[str] = None
+    filename: str, max_sentences: Optional[str] = None, only_unique: bool = False
 ) -> List[str]:
     """
     Reads sentences from a corpus file, and returns a list of sentences.
@@ -31,6 +31,7 @@ def read_sentences_corpus(
         back to words again, unless stated otherwise.
     """
     sentences = []
+    unique_sentences = set()
     with open(filename, "r", encoding="utf-8") as f:
         line_count = sum(1 for _ in f)
         f.seek(0)
@@ -41,12 +42,22 @@ def read_sentences_corpus(
                 else round(line_count * (float(max_sentences[:-1]) / 100.0))
             )
         for line in f:
-            sentences.append(line.strip())
+            sentence = line.strip()
+            if only_unique:
+                unique_sentences.add(sentence)
+            else:
+                sentences.append(sentence)
             if max_sentences not in [None, -1, "100%"]:
-                if len(sentences) == max_sentences:
+                if (
+                    len(sentences) == max_sentences
+                    or len(unique_sentences) == max_sentences
+                ):
                     break
 
-    sentences = pre_process_sentences(sentences)
+    if not only_unique:
+        sentences = pre_process_sentences(sentences)
+    else:
+        sentences = pre_process_sentences(list(unique_sentences))
     return sentences
 
 

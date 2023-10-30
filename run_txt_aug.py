@@ -40,6 +40,11 @@ if __name__ == "__main__":
         help="Augmentation type to perform",
     )
     parser.add_argument(
+        "--unique",
+        action="store_true",
+        help="Only read unique sentences from the corpus",
+    )
+    parser.add_argument(
         "--maxs",
         type=str,
         default="10",
@@ -87,7 +92,9 @@ if __name__ == "__main__":
 
     random.seed(args.seed)
 
-    sentences = read_sentences_corpus(args.corpus, max_sentences=args.maxs)
+    sentences = read_sentences_corpus(
+        args.corpus, max_sentences=args.maxs, only_unique=args.unique
+    )
     print(f"Read {len(sentences)} sentences from {args.corpus}")
 
     if args.aug == ["translate"]:
