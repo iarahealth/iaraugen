@@ -133,6 +133,7 @@ def translate_sentences_api(
     skips_count = 0
     with open(output_file, "a") as f:
         for sentence in tqdm(sentences):
+            print("> " + sentence)
             if skips_count > 30:
                 print(
                     "[x] Too many translations skipped in a row. IP blocked? Aborting the program."
@@ -149,6 +150,7 @@ def translate_sentences_api(
                     skips_count += 1
                     continue
             skips_count = 0
+            print("> " + translation + "\n")
             if (
                 len(translation.split()) > 1
                 and random.random() <= 0.35
