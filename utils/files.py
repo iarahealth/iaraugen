@@ -70,8 +70,7 @@ def append_sentences_to_file(filename: str, sentences: List[str]) -> None:
         sentences (List[str]): The list of sentences to be written to the file.
     """
     with open(filename, "a", encoding="utf-8") as outfile:
-        for sentence in sentences:
-            outfile.write("\n" + sentence)
+        outfile.write("\n".join(sentences))
 
 
 def read_file(filename: str) -> List[str]:

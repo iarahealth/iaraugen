@@ -151,11 +151,13 @@ def translate_sentences_api(
                     continue
             skips_count = 0
             print("> " + translation + "\n")
+            translation_split = translation.split()
             if (
-                len(translation.split()) > 1
+                len(translation_split) > 1
                 and random.random() <= 0.35
-                and translation.split()[-2] != " "
-                and translation.split()[-1] not in special_words[target_lang]
+                and translation_split[-2] != " "
+                and translation_split[-1] not in special_words[target_lang]
+                and translation[-1] != "."
             ):
                 translation += "."
                 if random.random() <= 0.4:
