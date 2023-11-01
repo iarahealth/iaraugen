@@ -162,7 +162,7 @@ def post_process_sentences(
                     elif lang == "en":
                         sentence += random.choice([" paragraph", " new line"])
                     elif lang == "es":
-                        sentence += random.choice([" párrafo", " nueva línea"])
+                        sentence += random.choice([" y aparte", " nueva línea"])
         if sentence in ["", " "]:
             continue
         post_processed_sentences.append(sentence.strip())
