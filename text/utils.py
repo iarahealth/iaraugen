@@ -153,7 +153,7 @@ def post_process_sentences(
                         )
                     elif lang == "es":
                         sentence += random.choice(
-                            [" punto párrafo", " punto nueva línea"]
+                            [" punto y aparte", " punto nueva línea"]
                         )
             else:
                 if random.random() < 0.25:
