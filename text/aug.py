@@ -164,7 +164,7 @@ def translate_sentences_api(
                     elif target_lang == "pt":
                         translation += random.choice([" nova linha", " parágrafo"])
                     elif target_lang == "es":
-                        translation += random.choice([" nueva línea", " párrafo"])
+                        translation += random.choice([" nueva línea", " y aparte"])
 
             for punctuation, word in reverse_replacement_dict[target_lang].items():
                 translation = translation.replace(punctuation, word)
