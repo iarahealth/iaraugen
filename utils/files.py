@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 import requests
 import gzip
+import numpy as np
+import librosa
+import soundfile as sf
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from .text import pre_process_sentences
 
 
@@ -84,3 +87,43 @@ def download_and_extract(url: str, target_file: str) -> None:
             print(
                 f"Failed to download the file from {url}. Status code: {response.status_code}"
             )
+
+
+def load_audio(
+    audio_file: str, sample_rate: Optional[int] = None
+) -> Tuple[np.ndarray, int]:
+    """
+    Read an audio file using Librosa.
+
+    Parameters:
+    audio_file (str): The path to the audio file.
+
+    Returns:
+    Union[tuple, None]: A tuple containing the audio data (numpy.ndarray) and the sample rate (int).
+    If an error occurs during loading, the function returns None.
+    """
+    try:
+        y, sr = librosa.load(audio_file, sr=sample_rate)
+        return y, sr
+    except Exception as e:
+        print(f"Error loading the audio file: {e}")
+        raise e
+
+
+def save_audio(
+    audio: np.ndarray, output_path: str, sample_rate: int, fformat: str = "ogg"
+) -> None:
+    """
+    Save audio data using soundfile.
+
+    Parameters:
+    audio_data (numpy.ndarray): The audio data to be saved.
+    sample_rate (int): The sample rate of the audio data.
+    output_file (str): The path where the Ogg Vorbis file will be saved.
+    """
+    if not output_path.endswith("." + fformat):
+        output_path += "." + fformat
+    try:
+        sf.write(output_path, audio, sample_rate, format="ogg")
+    except Exception as e:
+        print(f"Error saving the audio as Ogg Vorbis: {e}")

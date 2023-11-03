@@ -78,6 +78,7 @@ replacement_dict = {
     "fecha chaves": "}",
     "abre chave": "{",
     "fecha chave": "}",
+    "barra": "/",
     "uma cruz": "+",
     "duas cruzes": "++",
     "três cruzes": "+++",
@@ -86,9 +87,9 @@ replacement_dict = {
 reverse_replacement_dict = {
     # Warning: order matters!
     "...": " reticências",
-    ".": " ponto",
+    ".": " ponto ",
     ":": " dois pontos",
-    ",": " vírgula",
+    ",": " vírgula ",
     ";": " ponto e vírgula",
     "\n": " parágrafo",
     "‒-": " travessão",
