@@ -73,9 +73,17 @@ def append_sentences_to_file(filename: str, sentences: List[str]) -> None:
         outfile.write("\n".join(sentences))
 
 
-def read_file(filename: str) -> List[str]:
-    with open(filename, "r", encoding="utf-8") as f:
-        return f.readlines()
+def read_file(file_path: str) -> List[str]:
+    try:
+        with open(file_path, "r") as file:
+            lines = file.readlines()
+            return [line.strip() for line in lines if line.strip()]
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        exit(1)
+    except Exception as e:
+        print(f"An error occurred while reading {file_path}: {e}")
+        exit(1)
 
 
 def download_and_extract(url: str, target_file: str) -> None:

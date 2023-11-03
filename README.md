@@ -26,3 +26,11 @@ help: ./run_audio_aug.py -h
 example usage:
 ./run_audio_aug.py test.ogg --augmentations PitchShift GainTransition --output_format ogg
 ```
+
+## Corpus creation
+```
+help: ./run_create_corpus.py -h 
+
+example usage:
+./run_create_corpus.py dataset_es.txt --lang es --output corpus_es.tok
+```
