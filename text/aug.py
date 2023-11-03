@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 import torch
 import re
+import random
 
 from typing import List, Callable
 from deep_translator import GoogleTranslator
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from tqdm import tqdm
+from num2words import num2words
 
 # from utils.files import download_and_extract
-# from utils.text import STOPWORDS
+from .utils import (
+    reverse_replacement_dict,
+    special_words,
+    replace_period_comma_with_dot,
+)
 from nlpaug.augmenter.word import (
     RandomWordAug,
     SynonymAug,
@@ -97,6 +103,87 @@ class SentenceAugmenter:
         if augmented_sentences == sentences:
             print("Warning: augmented sentences are equal to original sentences")
         return augmented_sentences
+
+
+def translate_sentences_api(
+    sentences: List[str], source_lang: str, target_lang: str, output_file: str
+) -> None:
+    """
+    Translates a list of sentences from the source language to the target language
+    using the Google Translator API.
+
+    Args:
+        sentences (List[str]): The list of sentences to be translated.
+        source_lang (str): The source language code (e.g., "pt" for Portuguese).
+        target_lang (str): The target language code (e.g., "en" for English).
+        output_file (str): The output file to write the translated sentences to.
+
+    Note:
+        This function is currently not used in the pipeline and appends the results
+        to an output file on-the-fly, since it is more error-prone.
+    """
+    if output_file is None:
+        output_file = "translated.txt"
+    proxy = {
+        "http": "",
+        "https": "",
+    }
+    translator = GoogleTranslator(source=source_lang, target=target_lang, proxies=proxy)
+
+    skips_count = 0
+    with open(output_file, "a") as f:
+        for sentence in tqdm(sentences):
+            print("> " + sentence)
+            if skips_count > 30:
+                print(
+                    "[x] Too many translations skipped in a row. IP blocked? Aborting the program."
+                )
+                exit(1)
+            # If the sentence is composed only of special characters, skip it.
+            if re.fullmatch(r"[\s\W]*", sentence):
+                continue
+            else:
+                try:
+                    translation = translator.translate(sentence)
+                except Exception as e:
+                    print(f"[!] Skipping translating sentence '{sentence}': {e}")
+                    skips_count += 1
+                    continue
+            skips_count = 0
+            print("> " + translation + "\n")
+            translation_split = translation.split()
+            if (
+                len(translation_split) > 1
+                and random.random() <= 0.35
+                and translation_split[-2] != " "
+                and translation_split[-1] not in special_words[target_lang]
+                and translation[-1] != "."
+            ):
+                translation += "."
+                if random.random() <= 0.4:
+                    if target_lang == "en":
+                        translation += random.choice([" new line", " paragraph"])
+                    elif target_lang == "pt":
+                        translation += random.choice([" nova linha", " parágrafo"])
+                    elif target_lang == "es":
+                        translation += random.choice([" nueva línea", " y aparte"])
+
+            for punctuation, word in reverse_replacement_dict[target_lang].items():
+                translation = translation.replace(punctuation, word)
+            translation = re.sub(
+                r"\d+",
+                lambda x: num2words(int(x.group()), lang=target_lang, to="cardinal"),
+                translation,
+            ).replace(",", "")
+            translation = translation.lower().strip()
+            translation = re.findall(r"\b[A-Za-zÀ-ÖØ-öø-ÿ]+\b", translation)
+
+            if target_lang == "en":
+                translation = replace_period_comma_with_dot(translation)
+            translation = " ".join(translation)
+
+            f.write(translation + "\n")
+            f.flush()
 
 
 def backtranslate_sentences_api(
@@ -205,7 +292,7 @@ def backtranslate_sentences_local(
     return translations
 
 
-def translation_pipeline(
+def backtranslation_pipeline(
     sentences: List[str], translate_mode: str, lang: str, device: str
 ) -> List[str]:
     """
@@ -270,6 +357,6 @@ def create_augmentation_sequence(
             )
         elif aug == "translate" or aug == "backtranslate":
             augmentation_sequence.append(
-                lambda x: translation_pipeline(x, translate_mode, lang, device)
+                lambda x: backtranslation_pipeline(x, translate_mode, lang, device)
             )
     return augmentation_sequence
