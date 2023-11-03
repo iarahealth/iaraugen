@@ -341,7 +341,6 @@ reverse_replacement_dict = {
         "+": " una cruz ",
         "{": " abrir llaves ",
         "}": " cerrar llaves ",
-        "ü": "",  # !!!
         "[unk]": "",
         "[UNK]": "",
     },
