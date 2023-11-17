@@ -38,7 +38,7 @@ AUG_PARAMS = {
         "p": 0.5,
     },
     "Normalize": {"p": 0.7},
-    "TimeStretch": {"min_rate": 0.8, "max_rate": 1.25, "p": 0.8},
+    "TimeStretch": {"min_rate": 0.8, "max_rate": 1.25, "p": 0.7},
     "PitchShift": {"min_semitones": -1.0, "max_semitones": 1.0, "p": 0.7},
     "Shift": {"min_shift": -1.0, "max_shift": 1.0, "p": 0.7},
 }
