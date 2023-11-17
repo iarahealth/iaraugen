@@ -113,7 +113,7 @@ def download_and_extract(url: str, target_file: str) -> None:
 
 def load_audio(
     audio_file: str, sample_rate: Optional[int] = None
-) -> Tuple[np.ndarray, int]:
+) -> Tuple[Optional[np.ndarray], Optional[int]]:
     """
     Read an audio file using Librosa.
 
@@ -128,8 +128,8 @@ def load_audio(
         y, sr = librosa.load(audio_file, sr=sample_rate)
         return y, sr
     except Exception as e:
-        print(f"Error loading the audio file: {e}")
-        raise e
+        print(f"[x] Error loading the audio file: {e}")
+        return None, None
 
 
 def save_audio(

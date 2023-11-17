@@ -20,6 +20,9 @@ def process_audio(
     clean: bool = False,
 ):
     audio, sr = load_audio(input_file, sample_rate)
+    if audio is None:
+        print(f"[!] Error loading audio file: {input_file}")
+        return
     output_filename = os.path.splitext(os.path.basename(input_file))[0]
     augmented_audio, transforms_used = apply_augmentation(audio, sr, augmentations)
 
@@ -36,7 +39,7 @@ def process_audio(
         save_audio(augmented_audio, output_path, sr, output_format)
         print(f"Augmented audio saved to {output_path}")
     else:
-        print(f"! No augmentations or cleaning applied to {input_file}")
+        print(f"[!] No augmentations or cleaning applied to {input_file}")
 
 
 if __name__ == "__main__":
