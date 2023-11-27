@@ -6,7 +6,7 @@ import re
 from typing import List
 from tqdm import tqdm
 from text.gen import make_chatgpt_query
-from utils.text import post_process_sentences
+from text.utils import post_process_sentences
 from utils.files import append_sentences_to_file, read_file
 
 if __name__ == "__main__":
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     if args.query is None:
         if args.return_type == "frases":
-            args.query = f"No contexto de {args.context}, gere {args.num} {args.return_type} contendo o termo '[MASK]', separadas por nova linha."
+            args.query = f"Você é um médico laudando. No contexto de {args.context}, gere {args.num} {args.return_type} contendo o termo '[MASK]', separadas por nova linha."
         else:
             args.query = f"No contexto de {args.context}, gere {args.num} {args.return_type} separadas por nova linha."
     else:
