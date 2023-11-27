@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import openai
 
+from openai import OpenAI
 from typing import List
 from tenacity import (
     retry,
@@ -21,7 +21,7 @@ MAX_TOKENS = {
 # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def make_chatgpt_query(
-    query: str, api_key: str, return_type: str, model: str = "gpt-3.5-turbo"
+    client, query: str, return_type: str, model: str = "gpt-3.5-turbo"
 ) -> List[str]:
     """
     Makes a query to the ChatGPT model and returns the generated response.
@@ -35,15 +35,13 @@ def make_chatgpt_query(
         List[str]: A list containing the model's response.
     """
     max_tokens = MAX_TOKENS[model]
-    openai.api_key = api_key
-    # check max_tokens
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=model, messages=[{"role": "user", "content": query}]
     )
-    is_truncated = response["usage"]["total_tokens"] >= max_tokens
+    is_truncated = response.usage.total_tokens >= max_tokens
     response = [
         line
-        for line in response["choices"][0]["message"]["content"].split("\n")
+        for line in response.choices[0].message.content.split("\n")
         if line.strip() != ""
     ]
     if is_truncated and len(response) > 0:

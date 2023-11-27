@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 import random
-from text.aug import create_augmentation_sequence
-from utils.text import (
+from text.aug import create_augmentation_sequence, translate_sentences_api
+from text.utils import (
     post_process_sentences,
     print_sentences_comparison,
     remove_equal_sentences,
@@ -11,7 +11,7 @@ from utils.files import append_sentences_to_file, read_sentences_corpus
 
 """
 example usage:
-./txt_aug.py corpus.tok --aug translate random --action delete --maxs 10 --lang en --append
+./txt_aug.py corpus.tok --aug translate random_del --maxs 10 --lang en --append
 """
 
 
@@ -40,6 +40,11 @@ if __name__ == "__main__":
         help="Augmentation type to perform",
     )
     parser.add_argument(
+        "--unique",
+        action="store_true",
+        help="Only read unique sentences from the corpus",
+    )
+    parser.add_argument(
         "--maxs",
         type=str,
         default="10",
@@ -50,6 +55,12 @@ if __name__ == "__main__":
         type=int,
         default=451,
         help="Random seed (default: 451)",
+    )
+    parser.add_argument(
+        "--slang",
+        type=str,
+        default="pt",
+        help="Source language for translation (default: pt)",
     )
     parser.add_argument(
         "--lang",
@@ -81,8 +92,14 @@ if __name__ == "__main__":
 
     random.seed(args.seed)
 
-    sentences = read_sentences_corpus(args.corpus, max_sentences=args.maxs)
+    sentences = read_sentences_corpus(
+        args.corpus, max_sentences=args.maxs, only_unique=args.unique
+    )
     print(f"Read {len(sentences)} sentences from {args.corpus}")
+
+    if args.aug == ["translate"]:
+        translate_sentences_api(sentences, args.slang, args.lang, args.output)
+        exit(0)
 
     augmentation_sequence = create_augmentation_sequence(
         args.aug, args.translate_mode, args.lang, args.device

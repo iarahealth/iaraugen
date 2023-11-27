@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 import requests
 import gzip
+import numpy as np
+import librosa
+import soundfile as sf
 
 from pathlib import Path
-from typing import List, Optional
-from .text import pre_process_sentences
+from typing import List, Optional, Tuple
+
+try:
+    from text.utils import pre_process_sentences
+except ModuleNotFoundError:
+    from ..text.utils import pre_process_sentences
 
 
 def read_sentences_corpus(
-    filename: str, max_sentences: Optional[str] = None
+    filename: str, max_sentences: Optional[str] = None, only_unique: bool = False
 ) -> List[str]:
     """
     Reads sentences from a corpus file, and returns a list of sentences.
@@ -28,6 +35,7 @@ def read_sentences_corpus(
         back to words again, unless stated otherwise.
     """
     sentences = []
+    unique_sentences = set()
     with open(filename, "r", encoding="utf-8") as f:
         line_count = sum(1 for _ in f)
         f.seek(0)
@@ -38,12 +46,22 @@ def read_sentences_corpus(
                 else round(line_count * (float(max_sentences[:-1]) / 100.0))
             )
         for line in f:
-            sentences.append(line.strip())
+            sentence = line.strip()
+            if only_unique:
+                unique_sentences.add(sentence)
+            else:
+                sentences.append(sentence)
             if max_sentences not in [None, -1, "100%"]:
-                if len(sentences) == max_sentences:
+                if (
+                    len(sentences) == max_sentences
+                    or len(unique_sentences) == max_sentences
+                ):
                     break
 
-    sentences = pre_process_sentences(sentences)
+    if not only_unique:
+        sentences = pre_process_sentences(sentences)
+    else:
+        sentences = pre_process_sentences(list(unique_sentences))
     return sentences
 
 
@@ -56,13 +74,20 @@ def append_sentences_to_file(filename: str, sentences: List[str]) -> None:
         sentences (List[str]): The list of sentences to be written to the file.
     """
     with open(filename, "a", encoding="utf-8") as outfile:
-        for sentence in sentences:
-            outfile.write("\n" + sentence)
+        outfile.write("\n".join(sentences))
 
 
-def read_file(filename: str) -> List[str]:
-    with open(filename, "r", encoding="utf-8") as f:
-        return f.readlines()
+def read_file(file_path: str) -> List[str]:
+    try:
+        with open(file_path, "r") as file:
+            lines = file.readlines()
+            return [line.strip() for line in lines if line.strip()]
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        exit(1)
+    except Exception as e:
+        print(f"An error occurred while reading {file_path}: {e}")
+        exit(1)
 
 
 def download_and_extract(url: str, target_file: str) -> None:
@@ -84,3 +109,43 @@ def download_and_extract(url: str, target_file: str) -> None:
             print(
                 f"Failed to download the file from {url}. Status code: {response.status_code}"
             )
+
+
+def load_audio(
+    audio_file: str, sample_rate: Optional[int] = None
+) -> Tuple[Optional[np.ndarray], Optional[int]]:
+    """
+    Read an audio file using Librosa.
+
+    Parameters:
+    audio_file (str): The path to the audio file.
+
+    Returns:
+    Union[tuple, None]: A tuple containing the audio data (numpy.ndarray) and the sample rate (int).
+    If an error occurs during loading, the function returns None.
+    """
+    try:
+        y, sr = librosa.load(audio_file, sr=sample_rate)
+        return y, sr
+    except Exception as e:
+        print(f"[x] Error loading the audio file: {e}")
+        return None, None
+
+
+def save_audio(
+    audio: np.ndarray, output_path: str, sample_rate: int, fformat: str = "ogg"
+) -> None:
+    """
+    Save audio data using soundfile.
+
+    Parameters:
+    audio_data (numpy.ndarray): The audio data to be saved.
+    sample_rate (int): The sample rate of the audio data.
+    output_file (str): The path where the Ogg Vorbis file will be saved.
+    """
+    if not output_path.endswith("." + fformat):
+        output_path += "." + fformat
+    try:
+        sf.write(output_path, audio, sample_rate, format="ogg")
+    except Exception as e:
+        print(f"Error saving the audio as Ogg Vorbis: {e}")
