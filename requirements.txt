@@ -3,7 +3,7 @@ deep-translator
 transformers
 sentencepiece
 tenacity
-openai
+openai==1.3.5
 nlpaug
 nltk
 num2words

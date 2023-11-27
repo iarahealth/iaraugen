@@ -3,6 +3,7 @@ import argparse
 import random
 import re
 
+from openai import OpenAI
 from typing import List
 from tqdm import tqdm
 from text.gen import make_chatgpt_query
@@ -92,6 +93,8 @@ if __name__ == "__main__":
 
     response_sentences: List[str] = []
     original_query = args.query
+    openai_client = OpenAI(api_key=args.api_key)
+
     for word in tqdm(wordlist):
         word = word.strip()
         query = re.sub(r"\[MASK\]", word, original_query)
@@ -101,7 +104,10 @@ if __name__ == "__main__":
             print(f"\nNumber of sentences left: {number_of_sentences_left}")
             print(f"Querying OpenAI's {args.model} with '{query}'...")
             query_response = make_chatgpt_query(
-                query, args.api_key, return_type=args.return_type, model=args.model
+                openai_client,
+                query,
+                return_type=args.return_type,
+                model=args.model,
             )
             print(query_response)
             response_sentences.extend(
