@@ -11,7 +11,7 @@ from utils.files import append_sentences_to_file, read_sentences_corpus
 
 """
 example usage:
-./txt_aug.py corpus.tok --aug translate random --action delete --maxs 10 --lang en --append
+./txt_aug.py corpus.tok --aug translate random_del --maxs 10 --lang en --append
 """
 
 

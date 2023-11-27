@@ -223,14 +223,13 @@ def backtranslate_sentences_api(
             skips_count += 1
             continue
         try:
-            backtranslator = backtranslator.translate(translation)
+            backtranslation = backtranslator.translate(translation)
+            backtranslations.append(backtranslation)
         except Exception as e:
             print(f"[!] Skipping backtranslating sentence '{translation}': {e}")
             skips_count += 1
             continue
         skips_count = 0
-        backtranslation = backtranslator.translate(translation)
-        backtranslations.append(backtranslation)
         print(f"{sentence} -> {translation} -> {backtranslation}")
 
     return backtranslations
