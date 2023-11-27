@@ -8,7 +8,7 @@ Can be used standalone (instructions below) or as part of other programs.
 help: ./run_txt_aug.py -h
 
 example usage:
-./run_txt_aug.py corpus_1br_10pt_15sept.tok --aug backtranslate random_del --maxs 5 --lang en --translate_mode google --apend --output out.txt
+./run_txt_aug.py corpus_1br_10pt_15sept.tok --aug backtranslate random_del --maxs 5 --lang en --translate_mode google --append --output out.txt
 ```
 
 ## Offline text generation
