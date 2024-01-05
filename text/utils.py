@@ -301,6 +301,7 @@ reverse_replacement_dict = {
         "mm": " milímetros",
         "MM": " milímetros",
         "=": " igual ",
+        "%": " por cento ",
     },
     "en": {
         "approx.": "approximately",
@@ -330,6 +331,7 @@ reverse_replacement_dict = {
         "mm": " millimeters",
         "MM": " millimeters",
         "=": " equals ",
+        "%": " percent ",
     },
     "es": {
         "...": random.choice([" elipsis", " puntos suspensivos"]),
@@ -358,6 +360,7 @@ reverse_replacement_dict = {
         "mm ": " milímetros",
         "MM ": " milímetros",
         "=": " igual ",
+        "%": " por ciento ",
     },
 }
 
