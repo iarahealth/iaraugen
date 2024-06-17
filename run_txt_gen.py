@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        default="gpt-3.5-turbo-16k",
+        default="gpt-3.5-turbo-0125",
         help="ChatGPT model to use",
     )
     parser.add_argument(
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     if args.query is None:
         if args.return_type == "frases":
-            args.query = f"Você é um médico laudando. No contexto de {args.context}, gere {args.num} {args.return_type} contendo o termo '[MASK]', separadas por nova linha."
+            args.query = f"Você é um médico ditando o laudo de um paciente. No contexto de {args.context}, gere {args.num} {args.return_type} contendo o termo '[MASK]', separadas por nova linha."
         else:
             args.query = f"No contexto de {args.context}, gere {args.num} {args.return_type} separadas por nova linha."
     else:
