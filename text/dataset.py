@@ -37,6 +37,10 @@ def create_corpus(sentences: List[str], lang: str) -> List[str]:
         sentence = sentence.strip()
         for punctuation, word in reverse_replacement_dict[lang].items():
             sentence = sentence.replace(punctuation, word)
+
+        # Add space between numbers and words
+        sentence = re.sub(r"(\D)(\d)", r"\1 \2", sentence)
+
         sentence = re.sub(
             r"\d+",
             lambda x: num2words(
@@ -46,7 +50,15 @@ def create_corpus(sentences: List[str], lang: str) -> List[str]:
             ),
             sentence,
         ).replace(",", "")
+        if len(sentence.split()) <= 1:
+            continue
         sentence = sentence.lower().strip()
+
+        if sentence == "ver comentário":
+            continue
+
+        sentence = sentence.replace("nbsp", "")
+
         sentence = re.findall(r"\b[A-Za-zÀ-ÖØ-öø-ÿ]+\b", sentence)
         if not sentence:
             continue
