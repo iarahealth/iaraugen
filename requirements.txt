@@ -1,6 +1,7 @@
-torch==2.1.0
+tokenizer==3.4.4
+torch==2.3.0
 deep-translator==1.11.4
-transformers==4.9.1
+transformers==4.41.0
 sentencepiece==0.1.99
 tenacity==8.2.3
 openai==1.42.0
