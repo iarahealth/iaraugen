@@ -13,13 +13,14 @@ MAX_TOKENS = {
     # https://platform.openai.com/docs/models/gpt-3-5
     "gpt-4-turbo": 128000,
     "gpt-3.5-turbo-0125": 16385,
+    "gpt-4o-mini": 128000,
 }
 
 
 # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def make_chatgpt_query(
-    client, query: str, return_type: str, model: str = "gpt-3.5-turbo-0125"
+    client, query: str, return_type: str, model: str = "gpt-4o-mini"
 ) -> List[str]:
     """
     Makes a query to the ChatGPT model and returns the generated response.
