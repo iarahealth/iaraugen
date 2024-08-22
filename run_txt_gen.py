@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        default="gpt-3.5-turbo-0125",
+        default="gpt-4o-mini",
         help="ChatGPT model to use",
     )
     parser.add_argument(
